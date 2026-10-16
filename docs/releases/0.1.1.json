@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.1",
+  "sourceCommit": "d119252cd1d3b873e02983557132a82fd8f8b512",
+  "assets": [
+    {
+      "name": "main.js",
+      "sha256": "81a4bbd96cac6b9529849761247b44bf968812937794fef946c5e2faf346a1bd",
+      "bytes": 132073
+    },
+    {
+      "name": "manifest.json",
+      "sha256": "b5e1201b6c974838f1fed484cca1061f12c9c74444e7f5cd042a48b21399ccb8",
+      "bytes": 330
+    },
+    {
+      "name": "styles.css",
+      "sha256": "14ee36148ba4549757266a03eea133300b661c18da390b3cf3cb1f990aafab5c",
+      "bytes": 1657
+    }
+  ],
+  "productTag": "0.1.1",
+  "releaseIdentity": "live-note-parameters-v2026.10.16.2",
+  "releaseUrl": "https://github.com/nestealin/obsidian-live-note-parameters/releases/tag/0.1.1",
+  "acceptedAt": "2026-10-16T08:38:20.186827+00:00",
+  "result": "accepted",
+  "runtimeBundleUnchangedFrom": "0.1.0",
+  "downloadVerification": "all five public assets equal packaged bytes",
+  "ciUrl": "https://github.com/nestealin/obsidian-live-note-parameters/actions/runs/38874009228",
+  "coreAndReleaseChecks": 21
+}
