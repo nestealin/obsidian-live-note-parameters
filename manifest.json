@@ -1,0 +1,9 @@
+{
+  "id": "nes-doc-vars-demo",
+  "name": "Nes Doc Variables Demo",
+  "version": "0.0.1",
+  "minAppVersion": "1.8.0",
+  "description": "Tab-local document variables in ordinary Markdown. Development demo only.",
+  "author": "Nes",
+  "isDesktopOnly": true
+}

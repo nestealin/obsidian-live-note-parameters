@@ -1,0 +1,9 @@
+.ndv-input {
+  display:inline-block !important; vertical-align:baseline; box-sizing:content-box;
+  field-sizing:content !important; width:auto !important;
+  height:1.4em !important; min-width:1ch; max-width:56ch; padding:0 1px !important;
+  margin:0; border:0 !important; border-bottom:1px dotted var(--interactive-accent) !important;
+  border-radius:3px !important; background:color-mix(in srgb,var(--interactive-accent) 8%,transparent) !important;
+  color:var(--text-accent) !important; font:inherit !important; line-height:inherit; box-shadow:none !important;
+}
+.ndv-input:focus {outline:none !important; outline-offset:0; box-shadow:inset 0 0 0 1px var(--interactive-accent) !important;}
