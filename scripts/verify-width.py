@@ -1,26 +1,12 @@
 """Measure actual Demo input geometry in isolated test tabs; no note writes."""
 import hashlib,json,subprocess,time
-from pathlib import Path
-CLI='/Applications/Obsidian.app/Contents/MacOS/obsidian-cli'
-ROOT=Path(__file__).resolve().parents[1]
-NOTE=ROOT.parents[2]/'zz-doc-vars-demo.md'
-
-def cli(*args):
-    r=subprocess.run([CLI,'vault=NesDev',*args],capture_output=True,text=True,timeout=25)
-    out=r.stdout.strip()
-    if r.returncode or out.startswith('Error:'):raise RuntimeError(out[:400] or r.stderr[:400])
-    return out
-
-def js(code):
-    out=cli('eval','code='+code)
-    if not out.startswith('=> '):raise RuntimeError(out[:400])
-    return json.loads(out[3:])
+from host import *
 
 before=hashlib.sha256(NOTE.read_bytes()).hexdigest()
 previous=js('JSON.stringify(app.workspace.activeLeaf?.id||null)')
 leaf=None;samples=[]
 try:
-    leaf=js("(async()=>{const l=app.workspace.getLeaf('tab');await l.setViewState({type:'markdown',state:{file:'zz-doc-vars-demo.md',mode:'preview'},active:true});return JSON.stringify(l.id);})()")
+    leaf=js("(async()=>{const l=app.workspace.getLeaf('tab');await l.setViewState({type:'markdown',state:{file:'zz-live-note-parameters-mvp.md',mode:'preview'},active:true});return JSON.stringify(l.id);})()")
     owner="app.workspace.getLeavesOfType('markdown').find(l=>l.id==="+json.dumps(leaf)+')'
     cli('dev:cdp','method=Emulation.setFocusEmulationEnabled','params='+json.dumps({'enabled':True}))
     for mode in ['preview','source']:

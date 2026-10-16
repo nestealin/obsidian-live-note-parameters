@@ -1,2 +1,9 @@
-evidence/
 node_modules/
+main.js
+evidence/
+run-data/
+dist/
+.DS_Store
+__pycache__/
+*.pyc
+docs/graduation/

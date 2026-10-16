@@ -7,3 +7,14 @@
   color:var(--text-accent) !important; font:inherit !important; line-height:inherit; box-shadow:none !important;
 }
 .ndv-input:focus {outline:none !important; outline-offset:0; box-shadow:inset 0 0 0 1px var(--interactive-accent) !important;}
+.lnp-manager {margin:0 0 12px;padding:8px 10px;border:1px solid var(--background-modifier-border);border-radius:6px;background:var(--background-primary);font-size:var(--font-ui-small);max-height:40vh;overflow:auto;}
+.lnp-manager summary {cursor:pointer;font-weight:var(--font-semibold);}
+.lnp-manager .lnp-help {color:var(--text-muted);margin:8px 0;}
+.lnp-manager .lnp-message {color:var(--text-accent);margin:6px 0;}
+.lnp-manager .lnp-definitions {width:100%;margin:8px 0;border-collapse:collapse;}
+.lnp-manager .lnp-definitions td,.lnp-manager .lnp-definitions th {padding:4px;text-align:left;}
+.lnp-manager .lnp-definitions input {width:100%;min-width:6ch;font:inherit;}
+.lnp-manager .lnp-definition-key {font-family:var(--font-monospace);}
+.lnp-manager .lnp-row-actions,.lnp-manager .lnp-manager-actions {display:flex;gap:6px;flex-wrap:wrap;}
+.lnp-manager button {font-size:inherit;}
+.lnp-migration-preview {white-space:pre-wrap;max-height:40vh;overflow:auto;}

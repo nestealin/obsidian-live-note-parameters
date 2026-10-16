@@ -1,6 +1,9 @@
 const {Plugin,MarkdownView,MarkdownRenderChild,Notice,editorInfoField,editorLivePreviewField}=require('obsidian');
 const {ViewPlugin,Decoration,WidgetType}=require('@codemirror/view');
-const {parseDocument,resolveText,getValue,SessionStore,protectedPath}=Core;
+const {syntaxTree}=require('@codemirror/language');
+const {isolateHistory}=require('@codemirror/commands');
+const {ParameterManager}=require('./manager.cjs');
+const {TOKEN,parseDocument,resolveText,getValue,SessionStore,protectedPath}=require('./core.cjs');
 
 class VariableWidget extends WidgetType {
   constructor(plugin,owner,session,key){super();this.plugin=plugin;this.owner=owner;this.session=session;this.key=key;}
@@ -20,9 +23,9 @@ class ReadingVariables extends MarkdownRenderChild {
   }
   onunload(){this.cancelled=true;}
 }
-module.exports=class DocVariablesDemo extends Plugin {
+module.exports=class LiveNoteParameters extends Plugin {
   async onload(){
-    this.active=true;this.sessions=new SessionStore();this.preSources=new WeakMap();this.editorByDom=new WeakMap();
+    this.active=true;this.sessions=new SessionStore();this.preSources=new WeakMap();this.editorByDom=new WeakMap();this.inlineSources=new WeakMap();this.manager=new ParameterManager(this);this.managerQueue=new Set();
     const plugin=this;
     this.registerEditorExtension(ViewPlugin.fromClass(class {
       constructor(view){this.view=view;plugin.editorByDom.set(view.dom,view);this.decorations=this.build(view);}
@@ -32,7 +35,8 @@ module.exports=class DocVariablesDemo extends Plugin {
       build(view){
         if(!view.state.field(editorLivePreviewField,false))return Decoration.none;
         const info=view.state.field(editorInfoField,false);
-        if(!(info instanceof MarkdownView)||!info.file||protectedPath(info.file.path))return Decoration.none;
+        if(!(info instanceof MarkdownView)||!info.file||info.editor?.cm!==view||protectedPath(info.file.path))return Decoration.none;
+        plugin.scheduleManager(info);
         const parsed=parseDocument(view.state.doc.toString());
         if(!parsed.defaults)return Decoration.none;
         const session=plugin.sessions.get(info.leaf,info.file.path,parsed.defaults);
@@ -64,11 +68,42 @@ module.exports=class DocVariablesDemo extends Plugin {
     }));
     this.registerEvent(this.app.workspace.on('active-leaf-change',()=>this.scheduleSync()));
     this.bindDocument(this.app.workspace.containerEl.ownerDocument);
+    this.registerEvent(this.app.metadataCache.on('changed',file=>{
+      if(protectedPath(file.path))return;
+      for(const leaf of this.app.workspace.getLeavesOfType('markdown'))if(leaf.view.file?.path===file.path&&leaf.view.getMode()==='preview')leaf.view.previewMode.rerender(true);
+    }));
+    this.addCommand({id:'manage-parameters',name:'管理笔记参数',callback:()=>this.manager.open(this.app.workspace.getActiveViewOfType(MarkdownView))});
     this.addCommand({id:'reset-tab',name:'重置当前标签页变量',callback:()=>{
       const view=this.app.workspace.getActiveViewOfType(MarkdownView);if(!view?.file)return;
       const session=this.sessions.sessions.get(view.leaf);if(!session)return;
       session.values.clear();this.syncInputs(view,session);new Notice('已恢复本标签页默认值');
     }});
+  }
+  scheduleManager(owner){
+    if(this.managerQueue.has(owner))return;this.managerQueue.add(owner);
+    requestAnimationFrame(()=>{this.managerQueue.delete(owner);if(this.active){this.manager.sync(owner);const session=this.sessions.sessions.get(owner.leaf);if(session&&owner.file?.path===session.path)this.syncInputs(owner,session);}});
+  }
+  applyDefinitionEdit(owner,result){
+    if(result.source===owner.editor.getValue())return;
+    const saved=[];
+    for(const leaf of this.app.workspace.getLeavesOfType('markdown')){
+      const session=this.sessions.sessions.get(leaf);
+      if(session&&session.path===owner.file.path)saved.push([leaf,new Map(session.values)]);
+    }
+    const editor=owner.editor,cm=editor.cm;
+    const changes=result.changes.map(c=>({from:c.from,to:c.to,insert:c.text}));
+    // Live Preview filters ordinary changes inside hidden frontmatter, including
+    // Editor.transaction(). This explicit, validated definition edit must retain
+    // that range and its renamed references as one isolated undo event.
+    cm.dispatch({changes,filter:false,userEvent:'input.live-note-parameters',annotations:isolateHistory.of('full')});
+    if(editor.getValue()!==result.source)throw new Error('编辑器未接受完整变更，定义未保存；请检查编辑状态。');
+    const parsed=parseDocument(result.source);
+    for(const [leaf,values]of saved){
+      const session=this.sessions.get(leaf,owner.file.path,parsed.defaults);
+      const renamed=new Map(result.renames);
+      for(const [key,value]of values){const next=renamed.get(key)||key;if(Object.prototype.hasOwnProperty.call(parsed.defaults,next))session.values.set(next,value);}
+      this.syncInputs(leaf.view,session);
+    }
   }
   scheduleSync(){
     // Obsidian may cache Reading DOM outside containerEl while Live Preview is active.
@@ -78,6 +113,7 @@ module.exports=class DocVariablesDemo extends Plugin {
       this.app.workspace.getLeavesOfType('markdown').forEach(leaf=>{
         const session=this.sessions.sessions.get(leaf);
         if(session&&leaf.view.file?.path===session.path)this.syncInputs(leaf.view,session);
+        this.scheduleManager(leaf.view);
       });
     });
   }
@@ -144,6 +180,12 @@ module.exports=class DocVariablesDemo extends Plugin {
         component.register(()=>observer.disconnect());
       }
     }
+    for(const code of el.querySelectorAll('code')){
+      if(code.closest('pre'))continue;
+      const clone=code.cloneNode(true);clone.querySelectorAll('.copy-to-clipboard-icon').forEach(e=>e.remove());
+      const raw=clone.textContent;
+      if([...raw.matchAll(TOKEN)].length)this.inlineSources.set(code,{raw,owner,session});
+    }
     // Only prose/inline-code text, excluding links, HTML, examples, and interactive controls.
     const document=el.ownerDocument;const walker=document.createTreeWalker(el,4);const nodes=[];
     while(walker.nextNode()){
@@ -177,24 +219,44 @@ module.exports=class DocVariablesDemo extends Plugin {
   }
   bindDocument(document){
     this.registerDomEvent(document,'click',event=>{
-      const target=event.target?.closest?.('.copy-code-button,.code-block-flair');if(!target)return;
+      const target=event.target?.closest?.('.copy-code-button,.code-block-flair,.copy-to-clipboard-icon');if(!target)return;
+      if(target.matches('.copy-to-clipboard-icon')){this.copyInline(event,target,document);return;}
       const pre=target.closest('pre'),record=pre&&this.preSources.get(pre);
-      if(record){this.copy(event,resolveText(record.raw,record.session),record.owner.containerEl.ownerDocument);return;}
+      if(record){this.copyResolved(event,record.raw,record.session,record.owner.containerEl.ownerDocument);return;}
       const editorDom=target.closest('.cm-editor'),cm=editorDom&&this.editorByDom.get(editorDom);if(!cm)return;
       const info=cm.state.field(editorInfoField,false);if(!(info instanceof MarkdownView)||!info.file||protectedPath(info.file.path))return;
       const parsed=parseDocument(cm.state.doc.toString());if(!parsed.defaults)return;
       let pos;try{pos=cm.posAtDOM(target);}catch{return;}
       const line=cm.state.doc.lineAt(pos),block=parsed.blocks.find(b=>line.from>=b.from&&line.from<b.to);
       if(!block?.enabled)return;
-      this.copy(event,resolveText(block.body.replace(/\r?\n$/,''),this.sessions.get(info.leaf,info.file.path,parsed.defaults)),document);
+      this.copyResolved(event,block.body.replace(/\r?\n$/,''),this.sessions.get(info.leaf,info.file.path,parsed.defaults),document);
     },true);
+  }
+  copyInline(event,target,document){
+    const code=target.closest('code'),record=code&&this.inlineSources.get(code);
+    if(record){this.copyResolved(event,record.raw,record.session,document);return;}
+    const cm=this.editorByDom.get(target.closest('.cm-editor'));if(!cm)return;
+    const owner=cm.state.field(editorInfoField,false);
+    if(!(owner instanceof MarkdownView)||owner.editor?.cm!==cm||!owner.file||protectedPath(owner.file.path))return;
+    const parsed=parseDocument(cm.state.doc.toString());if(!parsed.defaults)return;
+    let pos;try{pos=cm.posAtDOM(target);}catch{return;}
+    let raw;
+    syntaxTree(cm.state).iterate({from:Math.max(0,pos-2),to:Math.min(cm.state.doc.length,pos+2),enter(node){
+      if(node.name.startsWith('inline-code')&&pos>=node.from-1&&pos<=node.to+1)raw=cm.state.doc.sliceString(node.from,node.to);
+    }});
+    if(raw&&[...raw.matchAll(TOKEN)].length)this.copyResolved(event,raw,this.sessions.get(owner.leaf,owner.file.path,parsed.defaults),document);
+  }
+  copyResolved(event,raw,session,document){
+    const unknown=[...raw.matchAll(TOKEN)].filter(m=>!Object.prototype.hasOwnProperty.call(session.defaults,m[1]));
+    if(unknown.length){event.preventDefault();event.stopImmediatePropagation();new Notice('缺少参数定义：'+[...new Set(unknown.map(m=>m[1]))].join(', '));return;}
+    this.copy(event,resolveText(raw,session),document);
   }
   copy(event,text,document){
     event.preventDefault();event.stopImmediatePropagation();
     document.defaultView.navigator.clipboard.writeText(text).then(()=>new Notice('已复制渲染后的代码'),()=>new Notice('复制失败，请重试'));
   }
   onunload(){
-    this.active=false;
+    this.active=false;this.manager.destroy();this.managerQueue.clear();
     this.app.workspace.getLeavesOfType('markdown').forEach(leaf=>{
       const view=leaf.view;if(!(view instanceof MarkdownView))return;
       view.containerEl.querySelectorAll('input.ndv-input').forEach(input=>input.replaceWith(input.ownerDocument.createTextNode('{{'+input.dataset.ndvKey+'}}')));

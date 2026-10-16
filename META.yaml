@@ -1,12 +1,12 @@
-name: nes-doc-vars-demo
-owner: NesDev
-status: development-demo
-version: 0.0.1
+name: live-note-parameters
+owner: Nes
+status: active
+version: 0.1.0
 created: 2026-10-16
 produced_by: Codex
-origin: GCP-style tab-local document variables feasibility research
-source: original implementation against public Obsidian APIs
-runtime: Obsidian 1.13.7
-build: node scripts/build.mjs
-verify: node --test tests/core.test.cjs; python3 scripts/verify-runtime.py
+origin: verified tab-local document variables Demo
+repository: https://github.com/nestealin/obsidian-live-note-parameters
+runtime: Obsidian desktop 1.13.7+
+build: npm ci --ignore-scripts && npm run build
+verify: npm test && npm run check
 secrets: none

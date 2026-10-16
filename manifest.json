@@ -1,9 +1,10 @@
 {
-  "id": "nes-doc-vars-demo",
-  "name": "Nes Doc Variables Demo",
-  "version": "0.0.1",
-  "minAppVersion": "1.8.0",
-  "description": "Tab-local document variables in ordinary Markdown. Development demo only.",
+  "id": "live-note-parameters",
+  "name": "Live Note Parameters",
+  "version": "0.1.0",
+  "minAppVersion": "1.13.7",
+  "description": "Edit note parameters inline, synchronize their values within each tab, and copy resolved commands.",
   "author": "Nes",
-  "isDesktopOnly": true
+  "isDesktopOnly": true,
+  "authorUrl": "https://github.com/nestealin"
 }

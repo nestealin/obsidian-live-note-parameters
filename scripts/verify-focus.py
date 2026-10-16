@@ -1,23 +1,10 @@
 """Verify focus decoration cannot paint over adjacent source quotes."""
 import base64,hashlib,json,subprocess,time
-from pathlib import Path
-CLI='/Applications/Obsidian.app/Contents/MacOS/obsidian-cli'
-ROOT=Path(__file__).resolve().parents[1]
-NOTE=ROOT.parents[2]/'zz-doc-vars-demo.md'
-def cli(*args):
-    r=subprocess.run([CLI,'vault=NesDev',*args],capture_output=True,text=True,timeout=25)
-    out=r.stdout.strip()
-    if r.returncode or out.startswith('Error:'):raise RuntimeError(out[:400] or r.stderr[:400])
-    return out
-
-def js(code):
-    out=cli('eval','code='+code)
-    if not out.startswith('=> '):raise RuntimeError(out[:400])
-    return json.loads(out[3:])
+from host import *
 
 before=hashlib.sha256(NOTE.read_bytes()).hexdigest()
 previous=js('JSON.stringify(app.workspace.activeLeaf?.id||null)')
-leaf=js("(async()=>{const l=app.workspace.getLeaf('tab');await l.setViewState({type:'markdown',state:{file:'zz-doc-vars-demo.md',mode:'preview'},active:true});return JSON.stringify(l.id);})()")
+leaf=js("(async()=>{const l=app.workspace.getLeaf('tab');await l.setViewState({type:'markdown',state:{file:'zz-live-note-parameters-mvp.md',mode:'preview'},active:true});return JSON.stringify(l.id);})()")
 owner='app.workspace.getLeafById('+json.dumps(leaf)+')'
 cli('dev:cdp','method=Emulation.setFocusEmulationEnabled','params='+json.dumps({'enabled':True}))
 results=[]
@@ -54,5 +41,4 @@ return JSON.stringify({documentFocused:input.ownerDocument.hasFocus(),focusPseud
     (ROOT/'evidence/focus.json').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps(receipt,ensure_ascii=False,indent=2))
 finally:
-    cli('dev:cdp','method=Emulation.setFocusEmulationEnabled','params='+json.dumps({'enabled':False}))
-    js("(()=>{const l="+owner+";if(l)l.detach();const old=app.workspace.getLeafById("+json.dumps(previous)+");if(old)app.workspace.setActiveLeaf(old);return true;})()")
+    cleanup([leaf],previous)
