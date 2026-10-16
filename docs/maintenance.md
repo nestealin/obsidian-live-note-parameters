@@ -32,6 +32,10 @@ After Obsidian, theme or copy-plugin upgrades, verify dual-mode editing, default
 5. Install the same packaged bytes in test and user vaults using `scripts/install.py`; refresh manifests and enable/reload the plugin through Obsidian.
 6. Record source SHA, tags, asset hashes, environment and accepted/rejected result in a release record. Verify remote refs and downloaded asset hashes.
 
+## Community directory
+
+Initial submissions use the [Obsidian Community directory](https://community.obsidian.md/account/plugins), with an Obsidian account linked to the repository owner's GitHub account. Publish the entry after submission; a live listing alone does not mean its release has passed review. Follow the review on the account plugin page. Updates are fetched from GitHub releases; increment the product version for code fixes requested by the review. See [submission record](community-directory.md) and the [current official guide](https://docs.obsidian.md/plugins/releasing/submit-plugin).
+
 ## Troubleshooting and rollback
 
 If fields remain raw, check `doc_vars`, string values, duplicate definitions, eligible fences and source mode. Definition errors appear in the Live Preview manager. Missing definitions prevent the adapted copy action from reporting success.

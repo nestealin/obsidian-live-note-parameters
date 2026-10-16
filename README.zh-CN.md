@@ -4,7 +4,7 @@
 
 ## 安装与使用
 
-电脑端 MVP，最低 Obsidian 1.13.7。下载 [Release](https://github.com/nestealin/obsidian-live-note-parameters/releases) 的 `main.js`、`manifest.json`、`styles.css`，放入库的 `.obsidian/plugins/live-note-parameters/` 后启用。使用自定义配置目录时替换 `.obsidian`。也可通过 BRAT 添加 `nestealin/obsidian-live-note-parameters`；尚未提交社区目录。
+电脑端 MVP，最低 Obsidian 1.13.7。下载 [Release](https://github.com/nestealin/obsidian-live-note-parameters/releases) 的 `main.js`、`manifest.json`、`styles.css`，放入库的 `.obsidian/plugins/live-note-parameters/` 后启用。使用自定义配置目录时替换 `.obsidian`。已提交[官方社区目录](https://community.obsidian.md/plugins/live-note-parameters)，市场安装以审核结果和页面按钮状态为准。也可通过 BRAT 添加 `nestealin/obsidian-live-note-parameters`。
 
 1. 在笔记已有 Frontmatter 中加入 `doc_vars` 字符串映射；正文和行内代码使用 `{{PROJECT_ID}}`。
 2. 需要填写的语法代码块在语言后加 `docvars`；固定示例的普通代码块保持原样。

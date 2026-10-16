@@ -12,7 +12,7 @@ Desktop MVP. Requires Obsidian 1.13.7 or newer; validated on macOS with 1.13.7.
 2. Place them in `<vault>/<config-dir>/plugins/live-note-parameters/` (the default config directory is `.obsidian`).
 3. Reload Obsidian's community plugin list and enable **Live Note Parameters**.
 
-BRAT users can add `nestealin/obsidian-live-note-parameters`. This project has not been submitted to the community directory.
+The [official community listing](https://community.obsidian.md/plugins/live-note-parameters) has been submitted. In-app installation becomes available when the directory review permits it. BRAT users can add `nestealin/obsidian-live-note-parameters`; manual installation remains available during review.
 
 ## Write a parameterized note
 
