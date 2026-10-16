@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "sourceCommit": "e58b74acc10df0f06ffb709735491dd25a0f156d",
+  "assets": [
+    {
+      "name": "main.js",
+      "sha256": "81a4bbd96cac6b9529849761247b44bf968812937794fef946c5e2faf346a1bd",
+      "bytes": 132073
+    },
+    {
+      "name": "manifest.json",
+      "sha256": "2ee17517918d226574ffbd7e3b535af8a653f7f3e71182ebcdd740631030cdcc",
+      "bytes": 330
+    },
+    {
+      "name": "styles.css",
+      "sha256": "14ee36148ba4549757266a03eea133300b661c18da390b3cf3cb1f990aafab5c",
+      "bytes": 1657
+    }
+  ],
+  "releaseIdentity": "live-note-parameters-v2026.10.16.1",
+  "productTag": "0.1.0",
+  "releaseUrl": "https://github.com/nestealin/obsidian-live-note-parameters/releases/tag/0.1.0",
+  "acceptedAt": "2026-10-16T07:17:52.577143+00:00",
+  "result": "accepted",
+  "downloadVerification": "all five public assets equal packaged bytes",
+  "installations": [
+    "NesDev",
+    "NesVault"
+  ],
+  "verification": {
+    "coreAndRelease": 21,
+    "manager": 21,
+    "runtimeAndCopy": 23,
+    "geometryCases": 12,
+    "focusModes": 2,
+    "mainInstall": 17
+  },
+  "sourceBaseline": "23221ef620f032086af9c7190c58e48be23ddfcf",
+  "ciUrl": "https://github.com/nestealin/obsidian-live-note-parameters/actions/runs/38865540844"
+}
