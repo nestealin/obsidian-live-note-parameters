@@ -2,6 +2,14 @@
 
 在笔记中直接填写参数，全文实时同步，临时值按标签页隔离。默认值保留在 Markdown；本次填写留在内存。
 
+## 功能与效果
+
+- 实时预览与阅读模式均可填写，同标签页同名参数即时同步，新标签页从默认值开始。
+- 交互语法块与固定示例并存，复制语法块得到当前值并保留原有引号，固定示例保持原文。
+- 面板维护默认值，支持引用操作、草稿保存与取消、原生撤销与重做。
+- 运行时填写仅留在内存，不写笔记、插件数据或工作区状态。
+- 沿用现有代码块复制按钮，可选适配 Copy Inline Code 2.1.0 的行内图标。
+
 ## 安装与使用
 
 电脑端 MVP，最低 Obsidian 1.13.7。下载 [Release](https://github.com/nestealin/obsidian-live-note-parameters/releases) 的 `main.js`、`manifest.json`、`styles.css`，放入库的 `.obsidian/plugins/live-note-parameters/` 后启用。使用自定义配置目录时替换 `.obsidian`。已提交[官方社区目录](https://community.obsidian.md/plugins/live-note-parameters)，市场安装以审核结果和页面按钮状态为准。也可通过 BRAT 添加 `nestealin/obsidian-live-note-parameters`。
@@ -31,4 +39,10 @@
 - 临时填写不写笔记、插件数据或工作区状态；默认值本身仍是笔记明文，复制结果进入系统剪贴板。
 - 当前验收覆盖 macOS / Obsidian 1.13.7 的主窗口、双模式及 Copy Inline Code 2.1.0；移动端、弹出窗口、跨笔记嵌入、复杂嵌套和所有主题组合尚未验收。
 
-开发、维护和回退入口见 [英文 README](README.md) 与 [维护说明](docs/maintenance.md)。
+## 项目维护规范
+
+使用 Node 22+ 与已提交的依赖锁文件，执行 `npm ci --ignore-scripts`、`npm test`、`npm run build`、`npm run check`。`package.json` 是版本源，发布时同步 `manifest.json`、`versions.json` 与 CHANGELOG。
+
+发布前及宿主升级后，核验双模式输入、参数保存与撤销、原有复制按钮、相邻引号和标签页隔离；测试库与使用库安装同一份已验证资产。产品文档只描述支持的功能、实际交互、使用边界与维护操作。
+
+构建、验收、升级和回退见[维护说明](docs/maintenance.md)，版本变化见 [CHANGELOG](CHANGELOG.md)。许可证见 [LICENSE](LICENSE) 与[依赖许可说明](THIRD_PARTY_NOTICES.md)。

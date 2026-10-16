@@ -4,6 +4,14 @@ Fill in parameters directly in your notes, synchronize their values within each 
 
 [中文说明](README.zh-CN.md)
 
+## Features and results
+
+- Edit parameters in Live Preview and Reading, with immediate synchronization throughout the current tab.
+- Keep interactive syntax blocks alongside fixed examples. Copy the syntax block with current values and original quotes; fixed examples stay unchanged.
+- Start a new tab with default values. Temporary input never changes the note or persists in plugin data.
+- Maintain defaults through a collapsible panel with reference actions, draft/save/cancel and native Undo/Redo.
+- Use existing code-block copy buttons and the optional Copy Inline Code 2.1.0 inline icon.
+
 ## Install
 
 Desktop MVP. Requires Obsidian 1.13.7 or newer; validated on macOS with 1.13.7.
@@ -72,15 +80,15 @@ Legacy `<!-- doc-vars {...} -->` declarations render during transition. **Previe
 
 ## Data and compatibility
 
-Runtime values use a `WeakMap` keyed by the workspace leaf. They are not written to notes, plugin data, browser storage or workspace state. Defaults are ordinary note metadata. Copying writes to the system clipboard only after a copy action.
+Temporary values belong to the current tab and stay in memory. They are not written to notes, plugin data, browser storage or workspace state. Defaults are ordinary note metadata. Copying writes to the system clipboard only after a copy action.
 
 No network requests, telemetry, command execution or template evaluation. Rendering accesses only the opened note; protected private paths are skipped. Disabling the plugin restores readable Markdown placeholders.
 
-MVP scope: desktop, the main application window, prose, inline code and ordinary top-level fenced blocks. Mobile, pop-out windows, transclusions, complex nested Markdown, all themes and all code-block plugin combinations have not been accepted. Minimum version reflects the tested renderer; input sizing uses `field-sizing: content`.
+MVP scope: desktop, the main application window, prose, inline code and ordinary top-level fenced blocks. Mobile, pop-out windows, transclusions, complex nested Markdown, all themes and all code-block plugin combinations have not been accepted. The minimum version reflects the tested renderer.
 
-## Development
+## Project maintenance
 
-Node 22+, npm. Dependency versions are locked. YAML is bundled; Obsidian and CodeMirror are supplied by the host.
+Use Node 22+ and the committed dependency lockfile. Keep `package.json`, `manifest.json`, `versions.json` and the changelog consistent. Product documentation describes supported features, observable behavior, usage constraints and maintenance procedures.
 
 ```sh
 npm ci --ignore-scripts
@@ -89,7 +97,7 @@ npm run build
 npm run check
 ```
 
-Build output is `main.js` (not tracked). [Maintenance and verification](docs/maintenance.md) describes real-host acceptance, packaging, upgrades and rollback. [CHANGELOG](CHANGELOG.md) records released behavior; [provenance](docs/provenance.md) records the verified source baseline.
+Before releases and after host upgrades, verify dual-mode input, definition edits and Undo/Redo, copy buttons, adjacent quotes and tab isolation. Install the same verified assets in test and user vaults. [Maintenance and verification](docs/maintenance.md) covers packaging, acceptance, upgrades and rollback. [CHANGELOG](CHANGELOG.md) records released behavior.
 
 ## License
 
