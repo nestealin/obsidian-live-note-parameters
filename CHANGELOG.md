@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+## 0.1.1 — 2026-10-16
+
+### Maintenance
+
+- Clarify feature behavior and documentation maintenance requirements.
+- Update release metadata and community distribution. Runtime behavior is unchanged.
+
 ## 0.1.0 — 2026-10-16
 
 ### Added
