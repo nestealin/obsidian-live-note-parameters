@@ -5,15 +5,15 @@ Submitted and published on 2026-10-16 through the current official community por
 - Public listing: https://community.obsidian.md/plugins/live-note-parameters
 - Owner management: https://community.obsidian.md/account/plugins/live-note-parameters
 - Repository: `nestealin/obsidian-live-note-parameters`.
-- Current directory review: `0.1.0`, source `e58b74acc10df0f06ffb709735491dd25a0f156d`.
+- Current directory release and completed review: `0.1.1`, source `d119252cd1d3b873e02983557132a82fd8f8b512`.
 - Latest GitHub release: `0.1.1`, source `d119252cd1d3b873e02983557132a82fd8f8b512`.
-- Observed on 2026-10-18: the 0.1.0 release review remains failed; the explicit `main` preview at `5064e35b732cf33edb715a02154b0e32d39de66f` completed, with a dependency pass and CSS warnings; public **Add to Obsidian** remains disabled.
+- Verified on 2026-10-19: release review **Completed**, help request **resolved**, public **Add to Obsidian** enabled, and the listing reports version **0.1.1** with review status **Satisfactory**.
 
-Submission is complete; in-app availability still depends on directory review. A manual check for 0.1.1 reports that the directory could not read the default-branch manifest. Anonymous GitHub contents API and raw `HEAD`/`main` manifest requests all return HTTP 200 with the correct 0.1.1 file. An explicit `main` preview was accepted at the commit above, but the 0.1.1 release sync is not confirmed.
+The release-discovery blocker is resolved. The public installation action now links to `obsidian://show-plugin?id=live-note-parameters`. Users can open the plugin in Obsidian from the listing; BRAT and manual installation remain available.
 
-An authorized repair request was submitted through the official **Get help** form on 2026-10-16 and updated on 2026-10-18; the saved request remains **open**. It now explicitly requests administrator repository-identity verification and re-association for entry `12384`: the original GitHub repository ID was `1421770317`, and the recreated repository at the same URL is `1421866513`. The owner-facing listing editor does not expose a repository-association field. The request asks administrators to verify ownership, apply the identity override, resync 0.1.1, and rerun its release review. Entry-specific confirmation and the actual override remain pending.
+The completed release review confirms that the build reproduces the released `main.js` byte-for-byte, finds no vulnerable dependencies or suspicious network patterns, and passes individual vault-file access checks. Remaining findings are non-blocking CSS warnings and recommendations about artifact attestations, extra checksum/provenance assets, and clipboard access.
 
-Warnings do not block submissions under the [official review guidance](https://docs.obsidian.md/community-directory/manage-entry). No plugin-code change or new release is indicated by this default-branch read failure. Resolution requires successful detection and review of the 0.1.1 release, followed by an enabled public installation action. A completed branch preview alone is insufficient. Local main-vault and BRAT/manual installations remain usable.
+The support request for repository-identity verification and re-association is marked **resolved**. The recreated repository retains the same URL and plugin ID; no additional plugin-code change or version increment was needed to clear this publishing blocker. Local installations were not changed by this status verification.
 
 Preflight confirmed that the manifest matches the default branch, the ID and name do not duplicate a published entry, the release tag matches the manifest version, all three plugin assets match the packaged bytes, and README/license files are present.
 
